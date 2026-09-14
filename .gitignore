@@ -1,0 +1,9 @@
+# Generated book output
+.book-src/
+.book-out/
+
+# Exported PDFs — regenerate with ./book.sh pdf
+*.pdf
+
+# macOS
+.DS_Store

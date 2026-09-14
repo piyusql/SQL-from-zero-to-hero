@@ -1,0 +1,22 @@
+[book]
+title = "SQL from My Heart"
+description = "Mastering PostgreSQL from First Query to Terabyte Scale"
+authors = ["Andy W. Pearson"]
+language = "en"
+src = ".book-src"
+
+[build]
+build-dir = ".book-out"
+
+[output.html]
+default-theme = "rust"
+preferred-dark-theme = "ayu"
+additional-css = ["theme/print.css"]
+smart-punctuation = true
+
+[output.html.print]
+enable = true
+
+[output.html.fold]
+enable = true
+level = 1

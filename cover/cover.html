@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SQL from My Heart — cover mockup</title>
+<style>
+  :root {
+    --ink: #14213d;
+    --cream: #fbf7f0;
+    --trim-w: 7.5in;
+    --trim-h: 9.25in;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #2b2b2e;
+    font: 14px/1.5 -apple-system, "Helvetica Neue", sans-serif;
+    color: #ddd;
+    display: flex;
+    gap: 32px;
+    padding: 32px;
+    align-items: flex-start;
+  }
+
+  /* ---------- the cover ---------- */
+
+  #stage {
+    width: var(--trim-w);
+    height: var(--trim-h);
+    position: relative;
+    overflow: hidden;
+    background: #9fc3dd;
+    box-shadow: 0 18px 60px rgba(0,0,0,.6);
+    flex: none;
+    transform-origin: top left;
+  }
+
+  #art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--px, 50%) var(--py, 50%);
+    transform: scale(var(--zoom, 1));
+    transform-origin: center;
+  }
+
+  #empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    color: #2a4a63;
+    font-size: 15pt;
+    padding: 1in;
+    border: 3px dashed rgba(20,33,61,.35);
+    margin: .4in;
+  }
+  #stage.loaded #empty { display: none; }
+
+  .layer { position: absolute; inset: 0; pointer-events: none; }
+
+  /* editable text should still be clickable */
+  .layer [contenteditable] { pointer-events: auto; }
+
+  h1, h2, .byline, .kicker {
+    margin: 0;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  }
+
+  h1 {
+    font-size: 62pt;
+    line-height: .96;
+    font-weight: 600;
+    letter-spacing: -.015em;
+  }
+
+  h2 {
+    font-family: -apple-system, "Helvetica Neue", sans-serif;
+    font-size: 15pt;
+    line-height: 1.35;
+    font-weight: 400;
+    letter-spacing: .005em;
+  }
+
+  .byline {
+    font-family: -apple-system, "Helvetica Neue", sans-serif;
+    font-size: 17pt;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .kicker {
+    font-family: -apple-system, "Helvetica Neue", sans-serif;
+    font-size: 10pt;
+    font-weight: 600;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    opacity: .8;
+  }
+
+  .rule { height: 2px; background: currentColor; opacity: .45; }
+
+  /* ---------- variant A: bottom scrim ---------- */
+
+  #vA .scrim {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 52%;
+    background: linear-gradient(to bottom,
+      rgba(251,247,240,0) 0%,
+      rgba(251,247,240,.72) 26%,
+      rgba(251,247,240,.96) 52%,
+      rgba(251,247,240,1) 100%);
+  }
+  #vA .text {
+    position: absolute;
+    left: .72in; right: .72in; bottom: .62in;
+    color: var(--ink);
+  }
+  #vA .kicker { margin-bottom: .12in; }
+  #vA h2 { margin-top: .16in; max-width: 5in; opacity: .82; }
+  #vA .rule { margin: .3in 0 .18in; }
+
+  /* ---------- variant B: top band ---------- */
+
+  #vB .band {
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 36%;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 .72in;
+    color: var(--cream);
+  }
+  #vB h1 { font-size: 56pt; }
+  #vB h2 { margin-top: .18in; opacity: .78; max-width: 5in; }
+  #vB .kicker { margin-bottom: .14in; opacity: .6; }
+  #vB .foot {
+    position: absolute;
+    left: .72in; right: .72in; bottom: .55in;
+    color: var(--ink);
+    text-shadow: 0 1px 14px rgba(255,255,255,.85);
+    text-align: right;
+  }
+
+  /* ---------- variant C: left column ---------- */
+
+  #vC .col {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 41%;
+    background: rgba(251,247,240,.93);
+    backdrop-filter: blur(1.5px);
+    padding: .8in .5in .62in .62in;
+    display: flex;
+    flex-direction: column;
+    color: var(--ink);
+  }
+  #vC h1 { font-size: 46pt; }
+  #vC h2 { font-size: 12.5pt; margin-top: .22in; opacity: .8; }
+  #vC .spacer { flex: 1; }
+  #vC .byline { font-size: 13pt; letter-spacing: .1em; }
+  #vC .rule { margin: .2in 0 .16in; }
+
+  /* ---------- control panel ---------- */
+
+  #panel {
+    width: 280px;
+    flex: none;
+    position: sticky;
+    top: 32px;
+  }
+  #panel h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .14em;
+    color: #8a8a90; margin: 22px 0 8px; font-weight: 600;
+  }
+  #panel h3:first-child { margin-top: 0; }
+  .variants { display: flex; gap: 6px; }
+  .variants button {
+    flex: 1; padding: 9px 0; border: 1px solid #4a4a50; background: #333338;
+    color: #ddd; border-radius: 6px; cursor: pointer; font-size: 13px;
+  }
+  .variants button.on { background: var(--cream); color: #1a1a1e; border-color: var(--cream); }
+  input[type=file] { width: 100%; font-size: 12px; }
+  input[type=range] { width: 100%; }
+  label { display: block; font-size: 12px; color: #9a9aa0; margin: 10px 0 2px; }
+  .hint { font-size: 12px; color: #85858c; line-height: 1.5; }
+  kbd {
+    background: #3a3a40; border: 1px solid #55555c; border-bottom-width: 2px;
+    border-radius: 4px; padding: 1px 5px; font-size: 11px; font-family: inherit;
+  }
+
+  @media print {
+    body { display: block; padding: 0; background: #fff; }
+    #panel { display: none; }
+    #stage { box-shadow: none; transform: none !important; }
+    @page { size: 7.5in 9.25in; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <img id="art" alt="">
+  <div id="empty">Drop the painting here<br><span style="font-size:11pt;opacity:.7">or use the file picker →</span></div>
+
+  <div class="layer" id="vA">
+    <div class="scrim"></div>
+    <div class="text">
+      <div class="kicker" contenteditable>PostgreSQL 15+</div>
+      <h1 contenteditable>SQL from<br>My Heart</h1>
+      <h2 contenteditable>Mastering PostgreSQL from first query to terabyte scale</h2>
+      <div class="rule"></div>
+      <div class="byline" contenteditable>Andy W. Pearson</div>
+    </div>
+  </div>
+
+  <div class="layer" id="vB" hidden>
+    <div class="band">
+      <div class="kicker" contenteditable>PostgreSQL 15+</div>
+      <h1 contenteditable>SQL from My Heart</h1>
+      <h2 contenteditable>Mastering PostgreSQL from first query to terabyte scale</h2>
+    </div>
+    <div class="foot">
+      <div class="byline" contenteditable>Andy W. Pearson</div>
+    </div>
+  </div>
+
+  <div class="layer" id="vC" hidden>
+    <div class="col">
+      <div class="kicker" contenteditable>PostgreSQL 15+</div>
+      <h1 contenteditable>SQL from My Heart</h1>
+      <h2 contenteditable>Mastering PostgreSQL from first query to terabyte scale</h2>
+      <div class="spacer"></div>
+      <div class="rule"></div>
+      <div class="byline" contenteditable>Andy W. Pearson</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel">
+  <h3>Painting</h3>
+  <input type="file" id="file" accept="image/*">
+
+  <h3>Layout</h3>
+  <div class="variants">
+    <button data-v="A" class="on">Scrim</button>
+    <button data-v="B">Band</button>
+    <button data-v="C">Column</button>
+  </div>
+
+  <h3>Framing</h3>
+  <label>Zoom</label>
+  <input type="range" id="zoom" min="100" max="200" value="100">
+  <label>Horizontal</label>
+  <input type="range" id="px" min="0" max="100" value="50">
+  <label>Vertical</label>
+  <input type="range" id="py" min="0" max="100" value="50">
+
+  <h3>Notes</h3>
+  <p class="hint">
+    All text is editable — click and type.<br><br>
+    Trim size is 7.5&nbsp;&times;&nbsp;9.25in. Export with
+    <kbd>⌘P</kbd> → <em>Save as PDF</em>, background graphics on.
+  </p>
+</div>
+
+<script>
+const stage = document.getElementById('stage');
+const art = document.getElementById('art');
+
+function load(file) {
+  if (!file) return;
+  art.src = URL.createObjectURL(file);
+  stage.classList.add('loaded');
+}
+
+document.getElementById('file').onchange = e => load(e.target.files[0]);
+
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  load(e.dataTransfer.files[0]);
+});
+
+document.querySelectorAll('.variants button').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.variants button').forEach(b => b.classList.toggle('on', b === btn));
+    ['A', 'B', 'C'].forEach(v => document.getElementById('v' + v).hidden = v !== btn.dataset.v);
+  };
+});
+
+const bind = (id, prop, unit = '') =>
+  document.getElementById(id).oninput = e =>
+    stage.style.setProperty(prop, e.target.value / (unit ? 100 : 1) + (unit || '%'));
+
+bind('px', '--px');
+bind('py', '--py');
+document.getElementById('zoom').oninput = e =>
+  stage.style.setProperty('--zoom', e.target.value / 100);
+
+// 7.5in x 9.25in at 96dpi = 720 x 888 css px; scale down to fit the viewport
+function fit() {
+  const s = Math.min(1, (window.innerHeight - 64) / 888);
+  stage.style.transform = `scale(${s})`;
+  stage.style.marginRight = `${-(1 - s) * 720}px`;
+  stage.style.marginBottom = `${-(1 - s) * 888}px`;
+}
+fit();
+window.onresize = fit;
+</script>
+</body>
+</html>

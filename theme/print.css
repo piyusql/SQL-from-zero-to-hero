@@ -1,0 +1,21 @@
+@media print {
+  /* one chapter per page */
+  .page h1 { page-break-before: always; }
+  .page > :first-child { page-break-before: avoid; }
+
+  /* don't split these across pages */
+  pre, blockquote, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+
+  /* Wide psql output and EXPLAIN plans must never be silently clipped —
+     losing a column off the right edge is worse than an ugly wrap. */
+  pre, pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow: visible;
+    font-size: 8.5pt;
+    line-height: 1.25;
+  }
+
+  @page { margin: 18mm 16mm; }
+}
