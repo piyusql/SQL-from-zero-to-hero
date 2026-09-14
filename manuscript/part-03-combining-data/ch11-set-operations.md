@@ -456,7 +456,9 @@ Set operations are easy to overuse, because stacking two queries is the first id
 arrives and it always works. Two patterns are worth recognising as smells.
 
 **Branches over the same table that differ only in a literal.** Section 11.1's
-`open`/`closed` query reads the table twice to attach a label. `CASE` does it in one pass:
+`open`/`closed` query reads the table twice to attach a label. `CASE` does it in one pass —
+counting per bucket here rather than listing rows, so the two forms are directly
+comparable:
 
 ```sql
 SELECT CASE WHEN status IN ('pending','paid') THEN 'open' ELSE 'closed' END AS bucket,
@@ -466,11 +468,13 @@ WHERE  status IN ('pending','paid','delivered','returned')
 GROUP  BY 1;
 ```
 
-I expected to be able to quote a speedup here and cannot. On the large variant the two
-forms run within noise of each other — both around 250 ms across repeated runs, with the
-ordering inverting from run to run — because 15.10 plans the `UNION ALL` as a
-`Parallel Append` and gives each branch its own worker, so the second scan is very nearly
-free. Rewrite to `CASE` for the reasons that survive measurement: one scan instead of two
+I expected to be able to quote a speedup here and cannot. Across ten alternating runs on
+the large variant the `CASE` form reached a median of 255 ms against 278 ms for
+`UNION ALL` — a ratio of 1.09, with `UNION ALL` winning three of the ten. The counting
+form of `UNION ALL` is planned as a `Parallel Append` on 15.10, which gives each branch
+its own worker and makes the second scan very nearly free. Do not carry that plan over to
+the row-returning query of Section 11.1: that one gets a plain `Append`, no parallelism at
+all. Rewrite to `CASE` for the reasons that survive measurement: one scan instead of two
 means half the buffer traffic under concurrency, and the `CASE` version stays one scan
 when a fourth and fifth bucket arrive, while the `UNION ALL` version grows a branch and
 another full scan each time.

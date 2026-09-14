@@ -427,10 +427,10 @@ ERROR:  canceling statement due to statement timeout
 ```
 
 I had already let that query run for two and a half minutes with no sign of finishing. The
-`LEFT JOIN` form does complete, consistently but only modestly slower than `NOT EXISTS` —
-about 120 ms against about 90 ms across alternating runs here — having removed 2,000,000
-rows by filter, and it still estimates `rows=1` against an actual 45,104. Its problem is
-not the clock; it is that estimate.
+`LEFT JOIN` form does complete, and on this machine it is not even slower: across six
+alternating runs the two traded places, 83–104 ms for the `LEFT JOIN` against 87–98 ms for
+`NOT EXISTS`. It removed 2,000,000 rows by filter, and it still estimates `rows=1` against
+an actual 45,104. Its problem is not the clock; it is that estimate.
 
 > **In production —** the failure mode is not that `NOT IN` is slow. It is that `NOT IN`
 > is *fast until the subquery outgrows `work_mem`*, and then it is not slow, it is

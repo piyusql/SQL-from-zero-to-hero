@@ -508,7 +508,7 @@ FROM   customers c,
 
 ```text
 ERROR:  invalid reference to FROM-clause entry for table "c"
-LINE 4: ... (SELECT o.id FROM orders o WHERE o.customer_id = c.id LIMIT...
+LINE 3: ... (SELECT o.id FROM orders o WHERE o.customer_id = c.id LIMIT...
                                                              ^
 HINT:  There is an entry for table "c", but it cannot be referenced from this part of the query.
 ```

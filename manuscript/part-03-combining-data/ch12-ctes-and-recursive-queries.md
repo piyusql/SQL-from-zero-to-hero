@@ -476,6 +476,19 @@ atomically, with no window in which they exist in both places or neither — her
 scratch `invoices` table to a matching `invoices_archive`:
 
 ```sql
+CREATE TABLE invoices (id int PRIMARY KEY, customer text, city text,
+                       amount numeric(10,2), status text);
+CREATE TABLE invoices_archive (LIKE invoices);
+INSERT INTO invoices VALUES
+  (1,'Rajesh Kumar','Mumbai',12400.00,'paid'),
+  (2,'Sneha Desai','Ahmedabad',5400.00,'sent'),
+  (3,'Priya Menon','Kochi',3120.00,'paid'),
+  (4,'Harpreet Singh','Pune',19880.75,'sent'),
+  (5,'Vikram Reddy','Hyderabad',7650.50,'overdue'),
+  (6,'Arjun Iyer','Pune',2250.25,'paid');
+```
+
+```sql
 WITH closed AS (
     DELETE FROM invoices
     WHERE  status = 'paid'

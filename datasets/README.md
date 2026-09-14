@@ -74,7 +74,7 @@ floor, not a promise — a spinning disk or a small `shared_buffers` will be slo
 | Command                  | Time | Database size |
 |--------------------------|------|---------------|
 | `./load.sh all sm`       | ~1s  | ~28 MB total  |
-| `./load.sh retail lg`    | ~53s | 747 MB        |
+| `./load.sh retail lg`    | ~53s | 749 MB        |
 | `./load.sh telemetry lg` | ~50s | 2,352 MB      |
 | `./load.sh hr lg`        | ~14s | 354 MB        |
 

@@ -16,7 +16,7 @@ Read these before doing anything substantive:
 | `CONVENTIONS.md` | **Binding.** Voice, length, workbook split, NULL rendering, Indian data, verification rule. Follow it over habit. |
 | `TOC.md` | The full 54-chapter plan |
 | `README.md` | Progress table and build instructions |
-| `ERRATA-OPEN.md` | **Outstanding defects.** Currently 17 open in Part III, 4 of them factually wrong. |
+| `ERRATA-OPEN.md` | **Outstanding defects.** 12 open in Part III, all minor; also holds the standing rule on how to take a timing measurement. |
 
 Style exemplars: `manuscript/part-01-foundations/ch01-*.md` (conceptual) and
 `manuscript/part-02-core-sql/ch08-*.md` (measurement-heavy). Workbook exemplar:
@@ -26,10 +26,10 @@ Style exemplars: `manuscript/part-01-foundations/ch01-*.md` (conceptual) and
 
 **Nothing ships unverified.** Every SQL statement and every pasted output block must have
 been executed against a real server, and the output printed must be what actually came
-back. This is not ceremony — an errata pass over Parts I–II found 21 defects, and a second
-over Part III found 17. In both cases the failures clustered in blocks that were
-hand-edited or asserted rather than run, including several written by Claude and approved
-by Claude.
+back. This is not ceremony — an errata pass over Parts I–II found 21 defects, and a full
+re-verification of Part III on 2026-09-14 found four blockers and twelve minor items. In
+every case the failures clustered in blocks that were hand-edited or asserted rather than
+run, including several written by Claude and approved by Claude.
 
 Corollaries learned the hard way:
 
@@ -37,6 +37,15 @@ Corollaries learned the hard way:
   fabricated block gives itself away.
 - **Never assert a performance claim you have not measured.** Two shipped claims were
   wrong this way; both overstated the effect.
+- **Never measure while anything else is running against the container.** It has 4 vCPUs;
+  the same query varied 110–316 ms depending on load. On 2026-09-14 this produced a
+  *false* errata — a reported 1.5× speedup that was 1.09× on an idle box, confirmed by
+  Claude on contaminated numbers before being caught. Quote a median of ten or more
+  alternating runs, and when parallelising chapter work across subagents, forbid them
+  timing claims entirely and take the measurements yourself afterwards.
+- **Prefer deterministic evidence over the clock** wherever it can carry the argument:
+  row counts, plan node types, cost and row estimates, buffer counts,
+  `pg_relation_size()`, `pg_column_size()`, lock modes from `pg_locks`.
 - **`n_live_tup` is an estimate.** Use `count(*)` when exactness matters. This bit us.
 - **Say plainly when a premise you were given is wrong.** It has happened repeatedly and
   is the most valuable thing a subagent has done.
@@ -90,9 +99,14 @@ edit them, and both are gitignored along with `*.pdf`.
 ## State as of 2026-09-14
 
 - **Done and verified:** Parts I and II (chapters 1–8), Part III (9–12). 12 chapters,
-  12 workbook files, 32 practice sessions.
-- **Next to write:** Part IV, chapters 13–17 (data types and integrity).
-- **Open work:** `ERRATA-OPEN.md`.
+  12 workbook files, 32 practice sessions. Part III went through a second full
+  re-verification on 2026-09-14 — every SQL block re-executed — which found four blockers
+  (all fixed) and twelve minor items (see `ERRATA-OPEN.md`).
+- **In progress:** Part IV, chapters 13–17 (data types and integrity), in
+  `manuscript/part-04-types/`.
+- **Open work:** `ERRATA-OPEN.md`, plus any `BENCHMARK-TODO` markers left in Part IV
+  drafts — those are deliberate, and must be measured on an idle container before the
+  chapter is marked done.
 - Git identity for this repo is set locally to Piyus Gupta
   <piyusgupta01@gmail.com>; the machine's global config is a different, work identity, so
   do not rely on it.
