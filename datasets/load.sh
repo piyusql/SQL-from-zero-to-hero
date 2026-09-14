@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# load.sh — build the sample databases for "SQL from My Heart".
+# load.sh — build the sample databases for "SQL from Zero to Hero".
 #
 #   ./load.sh retail sm        one dataset, small
 #   ./load.sh all sm           all three, small

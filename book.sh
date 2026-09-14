@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 
 SRC=.book-src
 OUT=.book-out
-PDF="SQL-from-my-heart.pdf"
+PDF="SQL-from-zero-to-hero.pdf"
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Explicit order. Do not rely on glob sort: "99-appendices" sorts before "part-01".
@@ -43,10 +43,38 @@ chapter_title() {
   grep -m1 '^# ' "$1" | sed 's/^# //' || basename "$1" .md
 }
 
+# Drop a finished cover image at cover/cover.{jpg,jpeg,png} and it becomes page 1.
+# Absent, the book builds without one rather than failing.
+add_cover() {
+  local art
+  art=$(ls cover/cover.pdf cover/cover.jpg cover/cover.jpeg cover/cover.png 2>/dev/null | head -1) || true
+  [[ -n ${art:-} ]] || { echo "note: no cover at cover/cover.{pdf,jpg,png} — building without a cover."; return; }
+
+  # A PDF cover (e.g. exported from a design tool) is rasterised to PNG first.
+  if [[ $art == *.pdf ]]; then
+    command -v pdftoppm >/dev/null || {
+      echo "note: cover/cover.pdf needs poppler to rasterise — brew install poppler. Skipping cover."; return; }
+    pdftoppm -f 1 -l 1 -r 200 -png -singlefile "$art" "$SRC/.cover-raster"
+    art="$SRC/.cover-raster.png"
+  fi
+
+  # Inline as a data URI: print.html and the per-chapter pages sit at different
+  # depths, and a relative src that works in one breaks in the other.
+  local mime="image/png"
+  [[ $art == *.jpg || $art == *.jpeg ]] && mime="image/jpeg"
+  {
+    printf '<div class="cover-page"><img alt="cover" src="data:%s;base64,' "$mime"
+    base64 < "$art" | tr -d '\n'
+    printf '"></div>\n'
+  } > "$SRC/00-front-matter/00-cover.md"
+  echo "cover: ${art##*/} ($(du -h "$art" | cut -f1))"
+}
+
 generate_src() {
   rm -rf "$SRC"
   mkdir -p "$SRC"
   cp -R manuscript/. "$SRC"/
+  add_cover
 
   {
     echo "# Summary"
@@ -61,6 +89,7 @@ generate_src() {
 
       for f in "${files[@]}"; do
         rel=${f#"$SRC"/}
+        [[ $rel == *00-cover.md ]] && { echo "[Cover]($rel)"; continue; }
         # front matter has no part heading, so render it as an unnumbered prefix chapter
         if [[ -z $title ]]; then
           echo "[$(chapter_title "$f")]($rel)"

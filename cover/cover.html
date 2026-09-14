@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>SQL from My Heart — cover mockup</title>
+<title>SQL from Zero to Hero — cover mockup</title>
 <style>
   :root {
     --ink: #14213d;
@@ -124,7 +124,7 @@
     color: var(--ink);
   }
   #vA .kicker { margin-bottom: .12in; }
-  #vA h2 { margin-top: .16in; max-width: 5in; opacity: .82; }
+  #vA h2 { margin-top: .16in; max-width: none; white-space: nowrap; font-size: 13.5pt; opacity: .82; }
   #vA .rule { margin: .3in 0 .18in; }
 
   /* ---------- variant B: top band ---------- */
@@ -141,7 +141,7 @@
     color: var(--cream);
   }
   #vB h1 { font-size: 56pt; }
-  #vB h2 { margin-top: .18in; opacity: .78; max-width: 5in; }
+  #vB h2 { margin-top: .18in; opacity: .78; max-width: none; white-space: nowrap; font-size: 13.5pt; }
   #vB .kicker { margin-bottom: .14in; opacity: .6; }
   #vB .foot {
     position: absolute;
@@ -208,16 +208,16 @@
 </head>
 <body>
 
-<div id="stage">
-  <img id="art" alt="">
+<div id="stage" class="loaded" style="--zoom:1.12">
+  <img id="art" alt="" src="painting-source.jpg">
   <div id="empty">Drop the painting here<br><span style="font-size:11pt;opacity:.7">or use the file picker →</span></div>
 
   <div class="layer" id="vA">
     <div class="scrim"></div>
     <div class="text">
       <div class="kicker" contenteditable>PostgreSQL 15+</div>
-      <h1 contenteditable>SQL from<br>My Heart</h1>
-      <h2 contenteditable>Mastering PostgreSQL from first query to terabyte scale</h2>
+      <h1 contenteditable>SQL from<br>zero to hero</h1>
+      <h2 contenteditable>Mastering Postgres from First Query to Terabyte Scale</h2>
       <div class="rule"></div>
       <div class="byline" contenteditable>Andy W. Pearson</div>
     </div>
@@ -226,8 +226,8 @@
   <div class="layer" id="vB" hidden>
     <div class="band">
       <div class="kicker" contenteditable>PostgreSQL 15+</div>
-      <h1 contenteditable>SQL from My Heart</h1>
-      <h2 contenteditable>Mastering PostgreSQL from first query to terabyte scale</h2>
+      <h1 contenteditable>SQL from zero to hero</h1>
+      <h2 contenteditable>Mastering Postgres from First Query to Terabyte Scale</h2>
     </div>
     <div class="foot">
       <div class="byline" contenteditable>Andy W. Pearson</div>
@@ -237,8 +237,8 @@
   <div class="layer" id="vC" hidden>
     <div class="col">
       <div class="kicker" contenteditable>PostgreSQL 15+</div>
-      <h1 contenteditable>SQL from My Heart</h1>
-      <h2 contenteditable>Mastering PostgreSQL from first query to terabyte scale</h2>
+      <h1 contenteditable>SQL from zero to hero</h1>
+      <h2 contenteditable>Mastering Postgres from First Query to Terabyte Scale</h2>
       <div class="spacer"></div>
       <div class="rule"></div>
       <div class="byline" contenteditable>Andy W. Pearson</div>
@@ -259,7 +259,7 @@
 
   <h3>Framing</h3>
   <label>Zoom</label>
-  <input type="range" id="zoom" min="100" max="200" value="100">
+  <input type="range" id="zoom" min="100" max="200" value="112">
   <label>Horizontal</label>
   <input type="range" id="px" min="0" max="100" value="50">
   <label>Vertical</label>

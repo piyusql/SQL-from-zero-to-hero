@@ -142,10 +142,12 @@ chapter needs an ops concept, it cross-references Part X rather than teaching it
 Since Practice Sessions moved to the workbook, house length applies to **chapter prose
 only** and is **2,500–4,000 words** including code and output (`wc -w` on the file).
 
-Part I–II landed at 2,383 / 2,420 / 2,551 / 2,777 / 3,631 / 3,798 / 4,407. That spread is
-wider than ideal and the top of it is the honest reference: a dense chapter that measures
-things (Ch 6, 8) runs ~3,700, and a conceptual one (Ch 1–3) runs ~2,500. Do not pad a
-short chapter to hit a floor.
+Across Parts I–III the twelve drafted chapters run 2,118–4,432, median 3,632. The spread
+is not drift, it is subject matter: a conceptual chapter (1–3, 5) runs ~2,500, and one
+that measures things and pastes plans (7, 9, 10, 12) runs ~4,000+. Do not pad a short
+chapter to reach a floor, and **do not cut verified measurements to reach a ceiling** —
+if a chapter is long because it contains real output that earns its place, say so and
+leave it. Prose padding is the thing the limit exists to prevent.
 
 Workbook files are **not** counted and have no limit.
 
@@ -178,8 +180,8 @@ Workbook files are **not** counted and have no limit.
 
 ## Book Metadata
 
-- **Title:** SQL from My Heart
-- **Subtitle:** Mastering PostgreSQL from First Query to Terabyte Scale
+- **Title:** SQL from Zero to Hero
+- **Subtitle:** Mastering Postgres from First Query to Terabyte Scale
 - **Author (combined pen name for three authors):** Andy W. Pearson
 - **Cover art:** original painting, used at full bleed. Mockup in `cover/cover.html`.
 - **Trim size:** 7.5 × 9.25 in

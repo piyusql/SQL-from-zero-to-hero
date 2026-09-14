@@ -1,0 +1,80 @@
+/* Page-turn animation for chapter navigation.
+   mdbook does full page loads, so this is two halves: animate the outgoing page
+   on click, then animate the incoming one on load using a direction stashed in
+   sessionStorage. */
+
+:root {
+  --turn-ms: 380ms;
+  --turn-ease: cubic-bezier(0.35, 0, 0.25, 1);
+}
+
+/* The perspective has to live on an ancestor of the thing being rotated. */
+#page-wrapper,
+.page-wrapper {
+  perspective: 2400px;
+  perspective-origin: center center;
+}
+
+#mdbook-content,
+.content {
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Going forward: the current page lifts and swings away to the left,
+   hinged on its spine, and the next one swings in from the right. */
+@keyframes turn-out-forward {
+  from { transform: rotateY(0deg)   translateX(0);     opacity: 1; }
+  to   { transform: rotateY(-14deg) translateX(-4%);   opacity: 0; }
+}
+@keyframes turn-in-forward {
+  from { transform: rotateY(12deg)  translateX(5%);    opacity: 0; }
+  to   { transform: rotateY(0deg)   translateX(0);     opacity: 1; }
+}
+
+/* Going back: mirrored, hinged on the right. */
+@keyframes turn-out-back {
+  from { transform: rotateY(0deg)   translateX(0);     opacity: 1; }
+  to   { transform: rotateY(14deg)  translateX(4%);    opacity: 0; }
+}
+@keyframes turn-in-back {
+  from { transform: rotateY(-12deg) translateX(-5%);   opacity: 0; }
+  to   { transform: rotateY(0deg)   translateX(0);     opacity: 1; }
+}
+
+.turning-out-forward { animation: turn-out-forward var(--turn-ms) var(--turn-ease) forwards; }
+.turning-out-back    { animation: turn-out-back    var(--turn-ms) var(--turn-ease) forwards; }
+.turning-in-forward  { animation: turn-in-forward  var(--turn-ms) var(--turn-ease) both; transform-origin: right center; }
+.turning-in-back     { animation: turn-in-back     var(--turn-ms) var(--turn-ease) both; }
+
+/* A faint edge shadow while the page is mid-turn sells the paper. */
+.turning-out-forward::after,
+.turning-out-back::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(0,0,0,.10), transparent 22%);
+}
+
+/* Make the arrows feel like controls rather than links. */
+.nav-chapters {
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+.nav-chapters:hover { transform: scale(1.12); }
+.nav-chapters:active { transform: scale(0.94); }
+
+/* Respect the user's motion preference — no animation, no direction shift. */
+@media (prefers-reduced-motion: reduce) {
+  .turning-out-forward, .turning-out-back,
+  .turning-in-forward,  .turning-in-back {
+    animation: none !important;
+  }
+  .nav-chapters { transition: none; }
+}
+
+/* Never animate when printing. */
+@media print {
+  #mdbook-content, .content { transform: none !important; animation: none !important; }
+}

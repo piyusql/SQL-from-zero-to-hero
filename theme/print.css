@@ -1,10 +1,18 @@
 @media print {
-  /* one chapter per page */
-  .page h1 { page-break-before: always; }
-  .page > :first-child { page-break-before: avoid; }
+  /* mdbook's theme paints a grey page background. On screen that is fine; in a
+     printed PDF it is a grey rectangle on every one of 300+ pages. */
+  html, body, .page, .page-wrapper, #body-container, .content, #mdbook-content, main
+    { background: #fff !important; box-shadow: none !important; }
 
-  /* don't split these across pages */
-  pre, blockquote, table { page-break-inside: avoid; }
+  /* No page-break-before on h1: mdbook already emits a break div between
+     chapters, and the two together produced a blank page at every boundary
+     (26 of them in a 311-page build). */
+
+  /* Don't split these across pages. `pre` is deliberately excluded — a long
+     EXPLAIN plan that cannot fit one page would otherwise push to the next and
+     leave the previous half empty. Let long blocks break; keep 2 lines either side. */
+  blockquote, table { page-break-inside: avoid; }
+  pre { orphans: 2; widows: 2; }
   h1, h2, h3 { page-break-after: avoid; }
 
   /* Wide psql output and EXPLAIN plans must never be silently clipped —
@@ -17,5 +25,33 @@
     line-height: 1.25;
   }
 
-  @page { margin: 18mm 16mm; }
+  @page { size: A4; margin: 18mm 16mm; }
+}
+
+/* Cover page. mdbook injects an <h1> from the SUMMARY link text; hide it. */
+#cover { display: none; }
+
+@media print {
+  /* Fit the artwork to the page rather than bleeding off it: 100vw overflows
+     mdbook's content box and crops the left edge of the title.
+     No page-break-after — mdbook already emits one, and two make a blank page. */
+  .cover-page {
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    text-align: center;
+    background: #fff;
+  }
+  .cover-page img {
+    max-width: 100%;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    display: inline-block;
+  }
+}
+
+@media screen {
+  .cover-page { text-align: center; }
+  .cover-page img { width: 100%; max-width: 620px; }
 }

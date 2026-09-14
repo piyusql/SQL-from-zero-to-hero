@@ -1,5 +1,5 @@
-# SQL from My Heart
-### Mastering PostgreSQL from First Query to Terabyte Scale
+# SQL from Zero to Hero
+### Mastering Postgres from First Query to Terabyte Scale
 
 By **Andy W. Pearson** — the combined pen name of three authors.
 
@@ -29,7 +29,7 @@ sql-from-my-heart/
 ```bash
 ./book.sh serve    # browsable site with search + nav at http://localhost:3000
 ./book.sh build    # static site into .book-out/
-./book.sh pdf      # whole book -> SQL-from-my-heart.pdf
+./book.sh pdf      # whole book -> SQL-from-zero-to-hero.pdf
 ```
 
 Requires `mdbook` (`brew install mdbook`) and Google Chrome, which is used headlessly to
@@ -52,9 +52,8 @@ Both `.book-src/` and `.book-out/` are generated — do not edit them.
 |------|----------|--------|
 | Front matter | Preface, How to Use This Book | drafted |
 | I — Foundations | 1–3 | **done** — SQL verified on 15.10 (ch 2 install steps unverifiable by nature) |
-| II — Core SQL | 4–8 | ch 4, 6, 7, 8 **done** + verified · **ch 5 outstanding** |
-| Workbook | exercises/ | 17 sessions across ch 1–4, 6–8 |
-| III — Combining Data | 9–12 | not started |
+| II — Core SQL | 4–8 | **done** + verified |
+| III — Combining Data | 9–12 | **drafted** + verified · errata pass running |
 | IV — Types and Integrity | 13–17 | not started |
 | V — Enterprise Design | 18–24 | not started |
 | VI — Advanced Querying | 25–28 | not started |
@@ -64,6 +63,7 @@ Both `.book-src/` and `.book-out/` are generated — do not edit them.
 | X — Administration | 44–49 | not started |
 | XI — Applications at Scale | 50–53 | not started |
 | XII — Capstone | 54 | not started |
+| Workbook | exercises/ | 32 sessions across ch 1–12 |
 | Appendices | A–I | not started |
 
 **Datasets:** done and verified on PostgreSQL 15.10. `./load.sh all sm` loads

@@ -1,6 +1,6 @@
 [book]
-title = "SQL from My Heart"
-description = "Mastering PostgreSQL from First Query to Terabyte Scale"
+title = "SQL from Zero to Hero"
+description = "Mastering Postgres from First Query to Terabyte Scale"
 authors = ["Andy W. Pearson"]
 language = "en"
 src = ".book-src"
@@ -11,7 +11,8 @@ build-dir = ".book-out"
 [output.html]
 default-theme = "rust"
 preferred-dark-theme = "ayu"
-additional-css = ["theme/print.css"]
+additional-css = ["theme/print.css", "theme/page-turn.css"]
+additional-js  = ["theme/page-turn.js"]
 smart-punctuation = true
 
 [output.html.print]

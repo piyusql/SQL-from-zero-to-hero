@@ -1,6 +1,6 @@
 # Table of Contents
 
-**SQL from My Heart** — *Mastering PostgreSQL from First Query to Terabyte Scale*
+**SQL from Zero to Hero** — *Mastering Postgres from First Query to Terabyte Scale*
 54 chapters · 12 parts · ~180 practice sessions
 
 ---
@@ -34,7 +34,7 @@ Homebrew, apt/dnf, Docker. Clusters, `initdb`, data directory. `psql` meta-comma
 *4.1* Build the `retail` core tables · *4.2* Time an instant `ALTER` against a rewriting one
 
 **5. Inserting, Updating, and Deleting Data**
-`INSERT`, multi-row, `COPY`. `UPDATE`, `DELETE`, `RETURNING`. Upsert via `ON CONFLICT` and its concurrency caveats.
+`INSERT`, multi-row, `COPY`. `UPDATE`, `DELETE`, `RETURNING`. Upsert via `ON CONFLICT` and its concurrency caveats; `MERGE` (PG15) and why it is *not* a safer upsert.
 *5.1* `COPY` vs row-by-row `INSERT` · *5.2* Idempotent upsert · *5.3* Capture rows with `RETURNING`
 
 **6. Querying Fundamentals**
@@ -251,7 +251,7 @@ The `pg_stat_*` views worth knowing. What to alert on. Useful log configuration.
 *48.1* Stand up exporter + Grafana · *48.2* Build the alert dashboard · *48.3* Baseline, then detect an injected regression
 
 **49. Extensions Worth Knowing**
-`pg_stat_statements`, `auto_explain`, `pg_trgm`, `pgcrypto`, `pg_partman`, `pg_repack`, `postgres_fdw`, `hypopg`, `postgres_hll`, PostGIS, `pgvector`, TimescaleDB. Management, upgrades, and dependency risk.
+`pg_stat_statements`, `auto_explain`, `pg_trgm`, `pgcrypto`, `pg_partman`, `pg_repack`, `postgres_fdw`, `hypopg`, `postgres_hll`, `ltree`, PostGIS, `pgvector`, TimescaleDB. Management, upgrades, and dependency risk.
 *49.1* Install and query `pg_stat_statements` · *49.2* Test a hypothetical index with `hypopg` · *49.3* Query across databases with `postgres_fdw`
 
 ---

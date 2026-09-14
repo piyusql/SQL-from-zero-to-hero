@@ -1,29 +1,74 @@
 # Preface
 
-## Why this book has the title it does
+## Who Andy W. Pearson is
 
-Technical books are not usually named after feelings. The shelf this one will sit on is
-full of *Mastering*, *Definitive*, *In Action*, *The Complete Guide To* — titles that
-promise coverage, which is a reasonable thing to promise and a dull thing to say.
+There is no Andy W. Pearson. The name is three people, and it is assembled the way
+everything else in this book is — out of parts that each had to earn their place.
 
-We called this one *SQL from My Heart* because that is honestly how the three of us came
-to it. Between us we have spent the better part of two decades with PostgreSQL: designing
-schemas that outlived the companies that commissioned them, being paged at two in the
-morning because a query plan flipped, and slowly accumulating the kind of knowledge that
-does not fit in documentation because it is not really about syntax at all. It is about
-judgement. Which of the six ways to do this thing will still be a good idea in three
-years, at a hundred times the data volume, when the person maintaining it has never met
-you.
+**Andy** is Anand K Gupta.
+**W** is Tarun Kumar, though nobody who knows him calls him that. He is *Dablu*, the name
+his maa gave him.
+**Pearson** is Piyus Kumar.
 
-That kind of knowledge is usually transmitted by apprenticeship — by sitting near someone
-who has already made the mistake. Most people never get that. This book is our attempt to
-write it down.
+We met at college. In 2006, in our third year, we discovered databases at roughly the same
+time and in roughly the same way — by being handed something that was slow and being
+unable to explain why. We spent that year arguing about indexes with more confidence than
+any of us had earned, and somewhere in the middle of it we said we would write a book
+about this one day.
 
-The elephant on the cover is a painting. It was made for us, by hand, by someone who has
-never written a line of SQL and who put up with a great deal of talk about query planners
-during the months this book was written. PostgreSQL's mascot is an elephant called
-Slonik, and it felt right that ours should be one somebody painted rather than one
-somebody licensed.
+Students say that kind of thing. It is usually the last anyone hears of it.
+
+This is twenty years later. In between, the three of us went in different directions and
+kept ending up in the same conversation. We have worked on Microsoft SQL Server, on
+Oracle, on MySQL, and eventually on PostgreSQL — sometimes by choice, often because it
+was what the company already had. That route matters to what is in this book. When you
+have watched four systems solve the same problem four different ways, you stop believing
+that the way your current database does it is the only way, or the obvious one, and you
+start being able to say *why* it made that choice.
+
+We landed on PostgreSQL and stayed, and the thing that kept surprising us was scale. Not
+that it is fast — plenty of things are fast on a laptop. It is that the behaviour stays
+*explainable* as the data grows. The query planner tells you what it decided and roughly
+why. The statistics that produced the decision are readable. When something degrades at
+ten million rows that was fine at ten thousand, there is almost always a number you can
+go and look at that explains it. That is rarer than it sounds, and most of this book is
+us trying to hand over how to go and look.
+
+So: three authors, one name, a promise made in a classroom in 2006, and two decades of
+being wrong about databases in public until we were occasionally right.
+
+## Why the book has the title it does
+
+*Zero to hero* is a large promise, and the shelf this book will sit on is full of titles
+that make it without meaning it. So it is worth being precise about both ends before you
+spend your time on us.
+
+**Zero means zero.** Chapter 1 does not assume you have used a database. It assumes you
+are comfortable in a terminal and have seen a loop in some programming language, and it
+starts from why a database exists at all. If you already write SQL every day, the reading
+paths in the next section will tell you where to jump in.
+
+**Hero is the harder half**, and it is not what the phrase usually implies. It does not
+mean you will have memorised more syntax than your colleagues. Syntax you can look up, and
+the PostgreSQL documentation is better at it than we are. It means **judgement**: knowing
+which of the six ways to do this thing will still be a good idea in three years, at a
+hundred times the data volume, when the person maintaining it has never met you. Knowing
+which query plan should worry you. Knowing what the `ALTER TABLE` you are about to run
+will do to a table with two hundred million rows in it.
+
+That knowledge is normally transmitted by apprenticeship: by sitting near someone who has
+already made the mistake. Most people never get that. This book is our attempt to write it
+down.
+
+The distance between the two ends of the title is the whole point, and we have tried hard
+not to skip the middle. Every technique arrives with the scale at which it stops working.
+
+The elephant on the cover is a painting by **Neha Shree** — Piyus's wife — made by hand,
+in oils, by someone who has never written a line of SQL and who put up with a great deal
+of talk about query planners during the months this book was written. PostgreSQL's mascot
+is an elephant called Slonik, and it felt right that ours should be one somebody painted
+rather than one somebody licensed. Every copy of this book carries her work on the front,
+which is a better outcome than any stock image we could have bought.
 
 ## Who this book is for
 
@@ -86,15 +131,15 @@ we say where it stops. Where a decision only matters at scale, we flag it early 
 that you can make it before it is expensive to change. The subtitle says *to terabyte
 scale* and we meant it literally.
 
+Every SQL statement in this book was run before it was printed. The numbers are
+measurements, not estimates.
+
 ## Acknowledgements
 
 To everyone who has ever handed us a slow query and a production incident at the same
 time: you taught us more than any documentation did.
 
-And to the painter of the elephant. This book is for you.
+To the maa who named Dablu, and to everyone else who put up with three friends who never
+quite stopped talking about databases.
 
----
-
-*Andy W. Pearson* is the shared name of three engineers who have built, broken and
-repaired PostgreSQL systems across finance, logistics and infrastructure. They write
-together because no one of them has seen all of it.
+And to **Neha Shree**, who painted the elephant. You gave this book its face. Thank you.
