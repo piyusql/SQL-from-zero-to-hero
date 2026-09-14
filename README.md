@@ -8,7 +8,7 @@ production incidents on terabyte-scale clusters. 54 chapters across 12 parts, wi
 roughly 180 hands-on practice sessions.
 
 ---
-
+![Book Cover](cover/cover.jpg)
 ## Repository Layout
 
 ```
