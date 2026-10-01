@@ -55,15 +55,15 @@ Both `.book-src/` and `.book-out/` are generated — do not edit them.
 | II — Core SQL | 4–8 | **done** + verified |
 | III — Combining Data | 9–12 | **done** — re-verified 2026-09-14, every SQL block re-run · 12 minor items in `ERRATA-OPEN.md` |
 | IV — Data Types and Integrity | 13–17 | **drafted** + verified · 12 `BENCHMARK-TODO` markers awaiting measurement on an idle box |
-| V — Enterprise Design | 18–24 | not started |
-| VI — Advanced Querying | 25–28 | not started |
-| VII — Transactions and MVCC | 29–32 | not started |
+| V — Enterprise Design | 18–24 | **drafted** + independently re-run 2026-09-30 · chapters run 4,700–6,400 words: over house length because of pasted output |
+| VI — Advanced Querying | 25–28 | **drafted** + independently re-run 2026-09-30 · 3,950–4,160 words each |
+| VII — Transactions and MVCC | 29–32 | **drafted** + independently replayed 2026-09-30 · 3,980–4,288 words each |
 | VIII — Performance Engineering | 33–40 | not started |
 | IX — Programmability | 41–43 | not started |
 | X — Administration | 44–49 | not started |
 | XI — Applications at Scale | 50–53 | not started |
 | XII — Capstone | 54 | not started |
-| Workbook | exercises/ | 47 sessions across ch 1–17 |
+| Workbook | exercises/ | 88 sessions across ch 1–32 |
 | Appendices | A–I | not started |
 
 **Datasets:** done and verified on PostgreSQL 15.10. `./load.sh all sm` loads

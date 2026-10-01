@@ -101,6 +101,97 @@ generate_src() {
   } > "$SRC/SUMMARY.md"
 }
 
+# Chrome dies silently (exit 0, no PDF) when asked to lay out the whole book in
+# one go, and sometimes never exits after writing a PDF that did succeed. So:
+# split print.html at chapter breaks into chunks, print each with its own
+# throwaway profile, stop Chrome as soon as the file appears, then join them.
+print_pdf() {
+  tmp=$(mktemp -d)   # global: the EXIT trap runs after this function returns
+  trap 'pkill -f "user-data-dir=${tmp:-/nonexistent}" 2>/dev/null || true; rm -rf "${tmp:-}" "$OUT"/.chunk-*.html' EXIT
+
+  local n
+  n=$(python3 - "$OUT" "${CHUNK_CHAPTERS:-6}" <<'PY'
+import html, re, sys
+out, per = sys.argv[1], int(sys.argv[2])
+h = open(f"{out}/print.html").read()
+parts = re.split(r'(?=<div style="break-before: page)', h)
+head, chapters = parts[0], parts[1:]
+tail = "</main></div></div></body></html>"
+
+# Running header without one Chrome run per chapter (which repeats every embedded font once per
+# chunk: 59 chunks made a 20 MB PDF, 10 chunks make 6 MB). Each chapter is wrapped in its own
+# CSS *named page*, and each named page has its own literal header, so a chunk of many chapters
+# still gets the right chapter name on every page. The fade is an OPAQUE gradient on purpose: with
+# alpha (rgba) Chrome stores it as an image on every page, about 17 KB each, +13 MB over the book.
+def title_of(ch):
+    m = re.search(r'<h1[^>]*>(.*?)</h1>', ch, flags=re.S)
+    t = html.unescape(re.sub(r'<[^>]+>', '', m.group(1))).strip() if m else ""
+    return t.replace("\\", "\\\\").replace('"', '\\"')
+
+pagecss, wrapped = [], []
+for k, ch in enumerate(chapters):
+    # the last fragment also carries mdbook's closing tags and scripts: wrap only the chapter
+    end = ch.rfind("</main>") if k == len(chapters) - 1 else -1
+    body_part, rest = (ch[:end], ch[end:]) if end != -1 else (ch, "")
+    pagecss.append('@page pg%d{@top-center{content:"%s";width:178mm;text-align:right;'
+                   'font:italic 9pt Georgia,serif;color:#666;vertical-align:bottom;padding-bottom:6.5mm;'
+                   'background:linear-gradient(to right,#fff,#6e6e6e 70%%) '
+                   'no-repeat left calc(100%% - 3.5mm) / 100%% 0.35mm}}' % (k, title_of(ch)))
+    # The named page already starts a new page; mdbook's own break div on top of it makes a blank one.
+    body_part = re.sub(r'^<div style="break-before: page[^>]*>', '<div>', body_part)
+    wrapped.append('<div style="page:pg%d">%s</div>%s' % (k, body_part, rest))
+
+# chunk 0 is the cover alone (written specially below)
+groups = [wrapped[i:i+per] for i in range(0, len(wrapped), per)]
+chunks = [[]] + groups
+for i, c in enumerate(chunks):
+    if i == 0:
+        # The cover is its own document so nothing from the book chrome (padding,
+        # margins, page numbers) can reach it: the artwork fills the whole A4 page.
+        img = re.search(r'<img alt="cover"[^>]*>', head)
+        cover = ("<!DOCTYPE html><meta charset=utf-8><style>@page{size:A4;margin:0}"
+                 "html,body{margin:0;padding:0}img{display:block;width:210mm;height:297mm;object-fit:cover}"
+                 "</style>" + (img.group(0) if img else ""))
+        open(f"{out}/.chunk-000.html", "w").write(cover)
+        continue
+    body = re.sub(r'<div class="cover-page">.*?</div>', '', head, flags=re.S)
+    # mdbook picks its theme from prefers-color-scheme, and headless Chrome can report "dark",
+    # which prints white pages with grey text on a black canvas. A book is always the light theme.
+    body = body.replace('window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme', 'default_light_theme')
+    # Chunk i's named pages are the global ones for its chapters; give each chunk only its own rules.
+    first = (i - 1) * per
+    # body takes the first chapter's page name, or the stray page before it would be a blank page
+    style = ("<style>html{counter-reset:page @@PAGEOFFSET@@}body{page:pg%d}" % first
+             + "".join(pagecss[first:first + len(c)]) + "</style>")
+    open(f"{out}/.chunk-{i:03d}.html", "w").write(body + style + "".join(c) + tail)
+print(len(chunks))
+PY
+)
+
+  # Chrome restarts page numbering per chunk, so feed each chunk the page count so far.
+  local i pdf pid t pages=0 html
+  for ((i = 0; i < n; i++)); do
+    printf -v pdf '%s/%03d.pdf' "$tmp" "$i"
+    html="$OUT/.chunk-$(printf %03d "$i").html"
+    sed -i "" "s/@@PAGEOFFSET@@/$pages/" "$html"
+    "$CHROME" --headless --disable-gpu --no-pdf-header-footer \
+      --user-data-dir="$tmp/profile" --disable-component-update --virtual-time-budget=60000 \
+      --print-to-pdf="$pdf" "file://$PWD/$html" >/dev/null 2>&1 &
+    pid=$!
+    for ((t = 0; t < 300; t++)); do            # up to ~10 min per chunk
+      [[ -s $pdf ]] && { sleep 1; break; }
+      kill -0 "$pid" 2>/dev/null || break
+      sleep 2
+    done
+    kill "$pid" 2>/dev/null || true; pkill -f "user-data-dir=$tmp" 2>/dev/null || true
+    wait "$pid" 2>/dev/null || true
+    [[ -s $pdf ]] || { echo "chunk $i/$n produced no PDF" >&2; return 1; }
+    pages=$((pages + $(pdfinfo "$pdf" | awk '/^Pages:/{print $2}')))
+    echo "  chunk $((i + 1))/$n ok"
+  done
+  pdfunite "$tmp"/[0-9]*.pdf "$PWD/$PDF"
+}
+
 case "${1:-serve}" in
   serve)
     generate_src
@@ -119,10 +210,8 @@ case "${1:-serve}" in
     generate_src
     mdbook build
     [[ -x $CHROME ]] || { echo "Chrome not found at $CHROME" >&2; exit 1; }
-    "$CHROME" --headless --disable-gpu --no-pdf-header-footer \
-      --virtual-time-budget=60000 \
-      --print-to-pdf="$PWD/$PDF" \
-      "file://$PWD/$OUT/print.html" 2>/dev/null
+    command -v pdfunite >/dev/null || { echo "pdfunite missing — brew install poppler" >&2; exit 1; }
+    print_pdf
     echo "Wrote $PDF ($(du -h "$PDF" | cut -f1))"
     ;;
 

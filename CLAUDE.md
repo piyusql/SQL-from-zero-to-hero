@@ -88,30 +88,66 @@ Workbook sessions are `## Practice Session N.M` (H2) with Goal / Setup / Task / 
 ## Building
 
 ```bash
-./book.sh serve    # browsable site at localhost:3000
-./book.sh build    # static site
-./book.sh pdf      # SQL-from-zero-to-hero.pdf
+make install       # one-time: mdbook, poppler, libpq, Chrome (idempotent)
+make serve         # browsable site at localhost:3000        (./book.sh serve)
+make build         # static site                             (./book.sh build)
+make pdf           # SQL-from-zero-to-hero.pdf               (./book.sh pdf; run `make stop` first)
+make               # every other target: words, stats, todo, db-check, db-clean, psql ...
 ```
 
-Needs `mdbook` and Google Chrome. `.book-src/` and `.book-out/` are generated — never
-edit them, and both are gitignored along with `*.pdf`.
+`.book-src/` and `.book-out/` are generated — never edit them, and both are gitignored along
+with `*.pdf`. `serve`, `build` and `pdf` all share those two folders, so never run one while
+another is running.
 
-## State as of 2026-09-14
+The PDF is printed by headless Chrome in about ten chunks and joined with `pdfunite`. Things
+learned the hard way, all handled in `book.sh`:
 
-- **Done and verified:** Parts I and II (chapters 1–8), Part III (9–12). 12 chapters,
-  12 workbook files, 32 practice sessions. Part III went through a second full
-  re-verification on 2026-09-14 — every SQL block re-executed — which found four blockers
-  (all fixed) and twelve minor items (see `ERRATA-OPEN.md`).
-- **In progress:** Part IV, chapters 13–17 (data types and integrity), in
-  `manuscript/part-04-types/`.
-- **Open work:** `ERRATA-OPEN.md`, plus any `BENCHMARK-TODO` markers left in Part IV
-  drafts — those are deliberate, and must be measured on an idle container before the
-  chapter is marked done.
+- Chrome silently fails to print the whole book in one go, and sometimes never exits, so the
+  script prints chunks and stops Chrome itself.
+- The chapter running header uses one CSS *named page* per chapter (a literal title each), so a
+  chunk of many chapters still gets the right header. One chunk per chapter would also work but
+  repeats every embedded font per chunk: 59 chunks made a 20 MB PDF, ten make 6 MB.
+- The header's fading line must be an **opaque** gradient. An `rgba` gradient is stored as an
+  image on every page (+13 MB).
+- The theme is pinned to light: mdbook picks "ayu" (dark) when headless Chrome reports
+  `prefers-color-scheme: dark`, giving grey text on a black canvas.
+- The page-number offset is a unique token (`@@PAGEOFFSET@@`), not the word `OFFSET`, which
+  appears in chapter text.
+- The cover is its own one-page document with zero margin, cropped to A4.
+
+## State as of 2026-09-30
+
+- **Done and verified:** Parts I and II (chapters 1–8), Part III (9–12). Part III went through a
+  second full re-verification on 2026-09-14 — every SQL block re-executed — which found four
+  blockers (all fixed) and twelve minor items (see `ERRATA-OPEN.md`).
+- **Drafted:** Part IV (13–17, `manuscript/part-04-types/`), not re-run since it was written.
+- **Drafted and independently re-run on 2026-09-30:** Part V (18–24, `manuscript/part-05-design/`),
+  Part VI (25–28, `manuscript/part-06-advanced-querying/`) and Part VII (29–32,
+  `manuscript/part-07-mvcc/`). Book total: 32 chapters, 32 workbook files, 88 practice sessions.
+  Part VII's multi-session demos were replayed from each agent's two-`psql` harness on an idle
+  container; the lock-mode matrix in ch32 was also rebuilt independently and matches cell for cell.
+  Known run-to-run differences there: process and transaction ids in deadlock messages (wb-ch31). Parts V and VI were written by parallel
+  subagents, then every ```sql/```bash block in every chapter and workbook was re-run from scratch
+  and every ```text block compared with the real output. Known, deliberate differences:
+  ch20/wb-ch20 (UUID index sizes vary ~1% with random insert order; the UUIDv4 load WAL varies from
+  1.28 to 4.17 GB and the chapter says so; one random UUID variant digit), wb-ch27 (a GiST buffer
+  count that varies 233–274), ch19 (an ASCII diagram, not query output).
+- **Length:** many Part V chapters exceed the 4,000-word house length because of real pasted
+  output (4,700–6,400). Accepted; Part VI stayed within 4,161.
+- **Open work:** `ERRATA-OPEN.md`, plus any `BENCHMARK-TODO` markers left in drafts.
 - Git identity for this repo is set locally to Piyus Gupta
   <piyusgupta01@gmail.com>; the machine's global config is a different, work identity, so
   do not rely on it.
 
 ## Working with subagents
+
+**Concurrency chapters (Part VII):** each agent builds a small harness that owns several `psql`
+processes and orders events by polling `pg_stat_activity`/`pg_locks`, never by `sleep`; a
+replay of those harnesses on an idle container is the independent check. Tell agents never to
+`pkill` by pattern (one did, and could have killed another agent's session). pids and xids differ
+on every run, so pasted blocks must not depend on them. Vacuum/HOT numbers shift if anything
+else is writing anywhere on the server, so re-check them on an idle container.
+
 
 Parallelising chapters across subagents works well, with two caveats learned in practice:
 

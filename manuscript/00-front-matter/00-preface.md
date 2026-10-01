@@ -1,5 +1,38 @@
 # Preface
 
+## Why the book has the title it does
+
+*Zero to hero* is a large promise, and the shelf this book will sit on is full of titles
+that make it without meaning it. So it is worth being precise about both ends before you
+spend your time on us.
+
+**Zero means zero.** Chapter 1 does not assume you have used a database. It assumes you
+are comfortable in a terminal and have seen a loop in some programming language, and it
+starts from why a database exists at all. If you already write SQL every day, the reading
+paths in *How to Use This Book* will tell you where to jump in.
+
+**Hero is the harder half**, and it is not what the phrase usually implies. It does not
+mean you will have memorised more syntax than your colleagues. Syntax you can look up, and
+the PostgreSQL documentation is better at it than we are. It means **judgement**: knowing
+which of the six ways to do this thing will still be a good idea in three years, at a
+hundred times the data volume, when the person maintaining it has never met you. Knowing
+which query plan should worry you. Knowing what the `ALTER TABLE` you are about to run
+will do to a table with two hundred million rows in it.
+
+That knowledge is normally transmitted by apprenticeship: by sitting near someone who has
+already made the mistake. Most people never get that. This book is our attempt to write it
+down.
+
+The distance between the two ends of the title is the whole point, and we have tried hard
+not to skip the middle. Every technique arrives with the scale at which it stops working.
+
+The elephant on the cover is a painting by **Neha Shree** — Piyus's wife — made by hand,
+in oils, by someone who has never written a line of SQL and who put up with a great deal
+of talk about query planners during the months this book was written. PostgreSQL's mascot
+is an elephant called Slonik, and it felt right that ours should be one somebody painted
+rather than one somebody licensed. Every copy of this book carries her work on the front,
+which is a better outcome than any stock image we could have bought.
+
 ## Who Andy W. Pearson is
 
 There is no Andy W. Pearson. The name is three people, and it is assembled the way
@@ -36,39 +69,6 @@ us trying to hand over how to go and look.
 
 So: three authors, one name, a promise made in a classroom in 2006, and two decades of
 being wrong about databases in public until we were occasionally right.
-
-## Why the book has the title it does
-
-*Zero to hero* is a large promise, and the shelf this book will sit on is full of titles
-that make it without meaning it. So it is worth being precise about both ends before you
-spend your time on us.
-
-**Zero means zero.** Chapter 1 does not assume you have used a database. It assumes you
-are comfortable in a terminal and have seen a loop in some programming language, and it
-starts from why a database exists at all. If you already write SQL every day, the reading
-paths in the next section will tell you where to jump in.
-
-**Hero is the harder half**, and it is not what the phrase usually implies. It does not
-mean you will have memorised more syntax than your colleagues. Syntax you can look up, and
-the PostgreSQL documentation is better at it than we are. It means **judgement**: knowing
-which of the six ways to do this thing will still be a good idea in three years, at a
-hundred times the data volume, when the person maintaining it has never met you. Knowing
-which query plan should worry you. Knowing what the `ALTER TABLE` you are about to run
-will do to a table with two hundred million rows in it.
-
-That knowledge is normally transmitted by apprenticeship: by sitting near someone who has
-already made the mistake. Most people never get that. This book is our attempt to write it
-down.
-
-The distance between the two ends of the title is the whole point, and we have tried hard
-not to skip the middle. Every technique arrives with the scale at which it stops working.
-
-The elephant on the cover is a painting by **Neha Shree** — Piyus's wife — made by hand,
-in oils, by someone who has never written a line of SQL and who put up with a great deal
-of talk about query planners during the months this book was written. PostgreSQL's mascot
-is an elephant called Slonik, and it felt right that ours should be one somebody painted
-rather than one somebody licensed. Every copy of this book carries her work on the front,
-which is a better outcome than any stock image we could have bought.
 
 ## Who this book is for
 

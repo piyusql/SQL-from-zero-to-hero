@@ -1,4 +1,5 @@
 @media print {
+  :root { color-scheme: light; }
   /* mdbook's theme paints a grey page background. On screen that is fine; in a
      printed PDF it is a grey rectangle on every one of 300+ pages. */
   html, body, .page, .page-wrapper, #body-container, .content, #mdbook-content, main
@@ -25,7 +26,11 @@
     line-height: 1.25;
   }
 
-  @page { size: A4; margin: 18mm 16mm; }
+  @page {
+    size: A4;
+    margin: 18mm 16mm 22mm;
+    @bottom-center { content: counter(page); font: 9pt Georgia, serif; color: #555; }
+  }
 }
 
 /* Cover page. mdbook injects an <h1> from the SUMMARY link text; hide it. */
